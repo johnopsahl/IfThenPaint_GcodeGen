@@ -1,0 +1,19 @@
+{
+    "canvas_station": "paper_8x10",
+    "tool_head_stations": {
+        "1": "syringe_dispenser",
+        "2": "two_axis_head"
+    },
+    "tool_stations": {
+        "1": "brush_flat_1",
+        "2": "brush_flat_2",
+        "3": "brush_flat_3",
+        "4": "brush_flat_4"
+    },
+    "syringe_stations": {
+        "1": "paint_black",
+        "2": "paint_white",
+        "3": null,
+        "4": null
+    }
+}

@@ -1,0 +1,231 @@
+{
+    "machine": {
+        "name": "IfThenPaint",
+        "firmware": "grbl",
+        "number_of_axes": 6,
+        "number_of_tool_head_stations": 2,
+        "number_of_tool_stations": 4,
+        "number_of_syringe_stations": 4
+    },
+
+    "axes": {   
+        "x": {
+            "enabled": true,
+            "motion_type": "linear",
+            "range_mm": {"min": 0.0, "max": 1200.0}    
+        },
+        "y": {
+            "enabled": true,
+            "motion_type": "linear",
+            "range_mm": {"min": 0.0, "max": 1200.0}
+        },
+        "z": {
+            "enabled": true,
+            "motion_type": "linear",
+            "range_mm": {"min": 0.0, "max": 215.0}
+        },
+        "a": {  
+            "enabled": true,
+            "motion_type": "rotary",
+            "range_deg": {"min": null, "max": null}
+        },
+        "b": {
+            "enabled": true,
+            "motion_type": "rotary",
+            "range_deg": {"min": 0.0, "max": 180.0}
+        },
+        "c": {
+            "enabled": true,
+            "motion_type": "rotary",
+            "range_deg": {"min": null, "max": null}
+        }
+    },
+
+    "safety": {
+        "z_clearance_mm": 215.0
+    },
+
+    "canvas_station": {
+        "x_left_mm": 0.0,
+        "y_bottom_mm": 0.0
+    },
+
+    "palette": { 
+        "x_left_mm": 0.0,
+        "y_bottom_mm": 0.0,
+        "z_top_mm": 0.0,
+        "x_width_mm": 0.0,
+        "y_height_mm": 0.0
+    },
+
+    "wash_dish":{
+        "x_left_mm": 0.0,
+        "y_bottom_mm": 0.0,
+        "z_bottom_mm": 0.0,
+        "x_width_mm": 0.0,
+        "y_height_mm": 0.0
+    },
+
+    "towel": {
+        "x_left_mm": 0.0,
+        "y_bottom_mm": 0.0,
+        "z_top_mm": 0.0,
+        "x_width_mm": 0.0,
+        "y_height_mm": 0.0
+    },
+
+    "tool_head_stations": {
+        "1": {
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        },
+        "2": {
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        }
+    },
+    "tool_stations": {
+        "1": {
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        },
+        "2": {
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        },
+        "3": {
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        },
+        "4": {
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        }
+    },
+    "syringe_stations": {
+        "1": { 
+            "x_center_mm": 0.0,
+            "y_center_mm": 517.0
+        },
+        "2":{
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        },
+        "3":{
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        },
+        "4":{
+            "x_center_mm": 0.0,
+            "y_center_mm": 0.0
+        }
+    },
+
+    "operations": {
+        "home_zero_XYZA": [
+            "$H",
+            "G10 P0 L20 X0",
+            "G10 P0 L20 Y0",
+            "G10 P0 L20 Z212",
+            "$HA",
+            "G10 P0 L20 A0",
+            "G00 A0 Z{machine|z_safe_mm}",
+            "M62 P0 (DISABLE B AND C AXIS MOTOR DRIVERS)"
+        ],
+        "home_zero_paint_dispenser": [
+            "$104 = 200",
+            "$114 = 750",
+            "$124 = 50",
+            "$134 = 63",
+            "$HB",
+            "G10 P0 L20 B58"
+        ],
+        "home_zero_two_axis_head": [
+            "$104 = 6.6666",
+            "$114 = 5000",
+            "$124 = 250",
+            "$134 = 187",
+            "$HB",
+            "G10 P0 L20 B91.5",
+            "$HC",
+            "G10 P0 L20 C69",
+            "G00 B0 C0"
+        ],
+        "get_major_tool": [
+            "M62 P0 (DISABLE B AND C AXIS STEPPER MOTOR DRIVERS)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 A0 (POSITION A FOR GETTING MAJOR TOOL)",
+            "G00 X{major_tool_dock|x_center_mm} Y{major_tool_dock|y_center_mm} (POSITION ABOVE MAJOR TOOL)",
+            "G91 (RELATIVE COORDINATES)",
+            "G01 Z-16 F3000 (PARTIALLY ENGAGE QUICK RELEASE)",
+            "G01 X-7 (PARTIALLY REMOVE TOOL FROM TOOL HOLDER)",
+            "G01 Z-8 (LOWER TO ENGAGE QUICK RELEASE)",
+            "G01 Z2 (RAISE Z BEFORE REMOVING TOOL FROM TOOL HOLDER)",
+            "G90 (ABSOLUTE COORDINATES)",
+            "G01 X1150 (FULLY REMOVE TOOL FROM TOOL HOLDER)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 X1050 (POSITION IN FRONT OF ALL MAJOR TOOL HOLDERS)",
+            "M63 P0 (ENABLE B AND C AXIS MOTOR DRIVERS)" 
+        ],
+        "dock_major_tool": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 A0 (POSITION A FOR DOCKING MAJOR TOOL)",
+            "G00 X1050 (POSITION IN FRONT OF ALL MAJOR TOOL HOLDERS)",
+            "G00 Y{major_tool_dock|y_center_mm} (POSITION IN FRONT OF MAJOR TOOL HOLDER)",
+            "G00 X1150 (POSITION IN FRONT OF MAJOR TOOL HOLDER)",
+            "G00 Z195.5 (MOVE TO THE MAJOR TOOL CHANGE DOCK HEIGHT)",
+            "M62 P0 (DISABLE B AND C AXIS STEPPER MOTOR DRIVERS)",
+            "G01 X1235 F2000 (MOVE TOOL INTO TOOL HOLDER)",
+            "G04 P1 (1 SECOND DWELL)",
+            "G01 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)"
+        ],
+        "get_tool": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 A0 B0 C90 (MOVE A, B, AND C TO POSITION)",
+            "G00 Y{minor_tool_dock|y_center_mm} (POSITION ABOVE MINOR TOOL)",
+            "G00 X{minor_tool_dock|x_center_mm} (POSITION ABOVE MINOR TOOL)",
+            "G00 Z90 (FAST MOVE DOWN ABOVE MINOR TOOL)",
+            "G01 Z84.5 F3000 (SLOW MOVE DOWN TO ENGAGE MINOR TOOL)",
+            "G01 C0 (TURN C TO ENGAGE MINOR TOOL)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 X1050 (CREATE CLEARANCE FROM TOOL HOLDER)"
+        ],
+        "dock_tool": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 A0 B0 C0 (MOVE A AND C TO POSITION FOR DISENGAGE)",
+            "G00 Y{minor_tool_dock|y_center_mm} (POSITION ABOVE MINOR TOOL HOLDER)",
+            "G00 X{minor_tool_dock|x_center_mm} (POSITION ABOVE MINOR TOOL HOLDER)",
+            "G00 Z84.5 (MOVE DOWN TO ENGAGE MINOR TOOL HOLDER)",
+            "G01 C-90 F3000 (TURN C TO DISENGAGE MINOR TOOL)",
+            "G04 P1 (1 SECOND DWELL)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)"
+        ],
+        "get_syringe": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)",
+            "G00 A0 B58 (MOVE A AXIS TO POSITION FOR CAPTURING SYRINGE)",
+            "G00 X50 (POSITION IN FRONT OF SYRINGE)",
+            "G00 Y{syringe_dock|y_center_mm} (POSITION IN FRONT OF SYRINGE)",
+            "G00 Z93 (MOVE DOWN TO POSITION IN FRONT OF SYRINGE)",
+            "G00 X{syringe_dock|x_center_mm} (MOVE FORWARD TO ENGAGE SYRINGE)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 X40 (CLEARANCE FROM SYRINGE HOLDER)"
+        ],
+        "dock_syringe": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
+            "G00 A0 B58 (MOVE A AND B AXIS TO POSITION FOR DOCKING SYRINGE)",
+            "G00 Y{syringe_dock|y_center_mm} (POSITION SYRINGE ABOVE SYRINGE HOLDER)",
+            "G00 X{syringe_dock|x_center_mm} (POSITION SYRINGE ABOVE SYRINGE HOLDER)",
+            "G00 Z93 (MOVE DOWN TO DOCK SYRINGE SYRINGE)",
+            "G00 X50 (MOVE BACK TO DISENGAGE SYRINGE)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)"
+        ],
+        "dispense_syringe": [
+        ],
+        "mix_composition": [
+        ],
+        "load_brush": [
+        ],
+        "unload_brush": [
+        ]
+    }
+  }

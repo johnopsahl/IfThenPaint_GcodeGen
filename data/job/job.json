@@ -1,0 +1,21 @@
+{
+    "job": {
+        "id": "job_1",
+        "created_at": "2026-01-01T00:00:00Z",
+        "updated_at": "2026-01-01T00:00:00Z"
+    },
+    "source_image": {
+        "filename": "source_image.png",
+        "width_pixels": 100,
+        "height_pixels": 100
+    },
+    "image_sizing": {
+        "specified_dimension": "width",
+        "dimension_mm": 200
+    },
+    "dauber": {
+        "id": "line_stroke",
+        "number_of_quant_colors": 3,
+        "scan_angles": [0, 45, 90]
+    }
+}
