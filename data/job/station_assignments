@@ -6,9 +6,9 @@
     },
     "tool_stations": {
         "1": "brush_flat_1",
-        "2": "brush_flat_2",
-        "3": "brush_flat_3",
-        "4": "brush_flat_4"
+        "2": null,
+        "3": null,
+        "4": null
     },
     "syringe_stations": {
         "1": "paint_black",

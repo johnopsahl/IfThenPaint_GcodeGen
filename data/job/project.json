@@ -1,6 +1,7 @@
 {
-    "job": {
-        "id": "job_1",
+    "project": {
+        "name": "project_1",
+        "machine_config": "IfThenPaint",
         "created_at": "2026-01-01T00:00:00Z",
         "updated_at": "2026-01-01T00:00:00Z"
     },

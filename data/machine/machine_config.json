@@ -2,47 +2,63 @@
     "machine": {
         "name": "IfThenPaint",
         "firmware": "grbl",
-        "number_of_axes": 6,
-        "number_of_tool_head_stations": 2,
-        "number_of_tool_stations": 4,
-        "number_of_syringe_stations": 4
+        "tool_head_change": {
+            "enabled": true,
+            "tool_heads": ["paint_dispenser", "two-axis_head"]
+        },
+        "tool_change": {
+            "enabled": true,
+            "tool_head": "two-axis_head"
+        },
+        "syringe_change": {
+            "enabled": true,
+            "tool_head": "syringe_dispenser"
+        },
+        "paint_mixing": {
+            "enabled": true,
+            "tool_head": "two-axis_head",
+            "tool": "mix_paddle"
+        },
+        "paint_dispensing": {
+            "enabled": true,
+            "tool_head": "paint_dispenser"
+        } 
+        
     },
 
     "axes": {   
         "x": {
-            "enabled": true,
             "motion_type": "linear",
             "range_mm": {"min": 0.0, "max": 1200.0}    
         },
         "y": {
-            "enabled": true,
             "motion_type": "linear",
             "range_mm": {"min": 0.0, "max": 1200.0}
         },
         "z": {
-            "enabled": true,
             "motion_type": "linear",
             "range_mm": {"min": 0.0, "max": 215.0}
         },
         "a": {  
-            "enabled": true,
             "motion_type": "rotary",
             "range_deg": {"min": null, "max": null}
         },
         "b": {
-            "enabled": true,
-            "motion_type": "rotary",
-            "range_deg": {"min": 0.0, "max": 180.0}
+            "paint_dispenser": {
+                "motion_type": "linear",
+                "range_mm": {"min": 0.0, "max": 200.0}
+            },
+            "two-axis_head": {
+                "motion_type": "rotary",
+                "range_deg": {"min": 0.0, "max": 180.0}
+            }
         },
         "c": {
-            "enabled": true,
-            "motion_type": "rotary",
-            "range_deg": {"min": null, "max": null}
+            "two-axis_head": {
+                "motion_type": "rotary",
+                "range_deg": {"min": null, "max": null}
+            }
         }
-    },
-
-    "safety": {
-        "z_clearance_mm": 215.0
     },
 
     "canvas_station": {
@@ -121,37 +137,49 @@
         }
     },
 
+    "safety": {
+        "z_clearance_mm": 215.0
+    },
+
+    "paint_dispense": {
+        "mm_per_ml": 5.8,
+        "bead_height_slope": 7.5,
+        "bead_height_intercept": 2.125
+    },
+
     "operations": {
-        "home_zero_XYZA": [
-            "$H",
-            "G10 P0 L20 X0",
-            "G10 P0 L20 Y0",
-            "G10 P0 L20 Z212",
-            "$HA",
-            "G10 P0 L20 A0",
-            "G00 A0 Z{machine|z_safe_mm}",
-            "M62 P0 (DISABLE B AND C AXIS MOTOR DRIVERS)"
-        ],
-        "home_zero_paint_dispenser": [
-            "$104 = 200",
-            "$114 = 750",
-            "$124 = 50",
-            "$134 = 63",
-            "$HB",
-            "G10 P0 L20 B58"
-        ],
-        "home_zero_two_axis_head": [
-            "$104 = 6.6666",
-            "$114 = 5000",
-            "$124 = 250",
-            "$134 = 187",
-            "$HB",
-            "G10 P0 L20 B91.5",
-            "$HC",
-            "G10 P0 L20 C69",
-            "G00 B0 C0"
-        ],
-        "get_major_tool": [
+        "home_zero:": {
+            "machine": [
+                "$H",
+                "G10 P0 L20 X0",
+                "G10 P0 L20 Y0",
+                "G10 P0 L20 Z212",
+                "$HA",
+                "G10 P0 L20 A0",
+                "G00 A0 Z{machine|z_safe_mm}",
+                "M62 P0 (DISABLE B AND C AXIS MOTOR DRIVERS)"
+            ],
+            "paint_dispenser": [
+                "$104 = 200",
+                "$114 = 750",
+                "$124 = 50",
+                "$134 = 63",
+                "$HB",
+                "G10 P0 L20 B58"
+            ],
+            "two-axis_head": [
+                "$104 = 6.6666",
+                "$114 = 5000",
+                "$124 = 250",
+                "$134 = 187",
+                "$HB",
+                "G10 P0 L20 B91.5",
+                "$HC",
+                "G10 P0 L20 C69",
+                "G00 B0 C0"
+            ]
+        },
+        "get_tool_head": [
             "M62 P0 (DISABLE B AND C AXIS STEPPER MOTOR DRIVERS)",
             "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
             "G00 A0 (POSITION A FOR GETTING MAJOR TOOL)",
@@ -167,7 +195,7 @@
             "G00 X1050 (POSITION IN FRONT OF ALL MAJOR TOOL HOLDERS)",
             "M63 P0 (ENABLE B AND C AXIS MOTOR DRIVERS)" 
         ],
-        "dock_major_tool": [
+        "dock_tool_head": [
             "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
             "G00 A0 (POSITION A FOR DOCKING MAJOR TOOL)",
             "G00 X1050 (POSITION IN FRONT OF ALL MAJOR TOOL HOLDERS)",
@@ -204,7 +232,7 @@
             "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)",
             "G00 A0 B58 (MOVE A AXIS TO POSITION FOR CAPTURING SYRINGE)",
             "G00 X50 (POSITION IN FRONT OF SYRINGE)",
-            "G00 Y{syringe_dock|y_center_mm} (POSITION IN FRONT OF SYRINGE)",
+            "G00 Y{syringe_station|y_center_mm} (POSITION IN FRONT OF SYRINGE)",
             "G00 Z93 (MOVE DOWN TO POSITION IN FRONT OF SYRINGE)",
             "G00 X{syringe_dock|x_center_mm} (MOVE FORWARD TO ENGAGE SYRINGE)",
             "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)",
@@ -220,12 +248,87 @@
             "G00 Z{safety|z_clearance_mm} (RAISE TO MAX CLEARANCE HEIGHT)"
         ],
         "dispense_syringe": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)",
+            "G00 A0 (MOVE A AXIS TO POSITION FOR DISPENSING PAINT)",
+            "G38.3 B0 F250 (PROBE THE SYRINGE PLUNGER)",
+            "G00 X{x_syringe_mm} {y_syringe_mm} (POSITION SYRINGE ABOVE PALETTE)",
+            "G00 Z{z_syringe_dispense_mm} (MOVE DOWN TO SYRINGE DISPENSE HEIGHT)",
+            "G91 (RELATIVE COORDINATES)",
+            "G01 B{b_syringe_dispense_deg} F250 (DISPENSE PAINT)",
+            "G04 P2 (DWELL FOR PAINT TO STOP FLOWING)",
+            "G00 Z10 (RAISE TO A SAFE DISTANCE ABOVE PALLETE)"
         ],
-        "mix_composition": [
+        "mix_paint": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)",
+            "G00 A0 B0 C0 (ORIENT PAINT PADDLE)",
+            "G00 X380 Y503 (GO TO CENTER OF WELL)",
+            "G91 (RELATIVE COORDINATES)",
+            "G00 Y7.5 (GO TO Y MAX OF WELL)",
+            "G90 (ABSOLUTE COORDINATES)",
+            "G00 Z170.5 (LOWER PADDLE TO PALETTE)",
+            "G91 (RELATIVE COORDINATES)",
+            "G00 Y-10 (GO TO (Y_MAX - Y_MIN)/3 + Y_MIN OF WELL)",
+            "G00 Z5 (RAISE PADDLE ABOVE BLOB PEAK)",
+            "G00 Y-5 (GO TO Y MIN OF WELL)",
+            "G00 Z-5 (LOWER PADDLE TO PALETTE)",
+            "G00 Y10 (GO TO Y_MAX - (Y_MAX - Y_MIN)/3 OF WELL)",
+            "G00 Z5 (RAISE PADDLE ABOVE BLOB PEAK)",
+            "G00 Y5 (GO TO Y_MAX OF WELL)",
+            "G00 Z-4 (LOWER PADDLE TO POSTION ABOVE PALETTE)",
+            "G00 Y-15 (GO TO Y MIN OF WELL)",
+            "G00 Y15 (GO TO Y MAX OF WELL)",
+            "G00 Z10 (RAISE PADDLE ABOVE WELL)",
+            "G90 (ABSOLUTE COORDINATES)",
+            "G00 A90 (ROTATE PADDLE BY 90 DEG)",
+            "G00 X380 Y503 (GO TO CENTER OF WELL)",
+            "G91 (RELATIVE COORDINATES)",
+            "G00 X7.5 (GO TO X MAX OF WELL)",
+            "G90 (ABSOLUTE COORDINATES)",
+            "G00 Z170.5 (LOWER PADDLE TO PALETTE)",
+            "G91 (RELATIVE COORDINATES)",
+            "G00 X-10 (GO TO (X_MAX - X_MIN)/3 + X_MIN OF WELL)",
+            "G00 Z5 (RAISE PADDLE ABOVE BLOB PEAK)",
+            "G00 X-5 (GO TO X MIN OF WELL)",
+            "G00 Z-5 (LOWER PADDLE TO PALETTE)",
+            "G00 X10 (GO TO X_MAX - (X_MAX - X_MIN)/3 OF WELL)",
+            "G00 Z5 (RAISE PADDLE ABOVE BLOB PEAK)",
+            "G00 X5 (GO TO X_MAX OF WELL)",
+            "G00 Z-4.5 (LOWER PADDLE TO POSTION ABOVE PALETTE)",
+            "G00 X-15 (GO TO X MIN OF WELL)",
+            "G00 X15 (GO TO X MAX OF WELL)",
+            "G00 X-15 (GO TO X MIN OF WELL)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)"
         ],
-        "load_brush": [
+        "load_paint_onto_tool": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)",
+            "G00 X490 Y550 (GO TO INITIAL POSITION)",
+            "G00 A-90 B-45 C0",
+            "G00 Z105 (MOVE BRUSH DOWN TO CONTACT PALETTE)",
+            "G00 X500 (MOVE BRUSH ACROSS PAINT ON PALETTE)",
+            "G00 Z120 (RAISE BRUSH FOR CLEARANCE WITH PALETTE)",
+            "G00 X490 (GO TO INITIAL POSITION)",
+            "G00 Z105 (MOVE BRUSH DOWN TO CONTACT PALETTE)",
+            "G00 X500 (MOVE BRUSH ACROSS PAINT ON PALETTE)",
+            "G00 Z140 (RAISE BRUSH FOR CLEARANCE WITH PALETTE, FOR 180 DEG FLIP)",
+            "G00 C180 (FLIP BRUSH 180 DEG)",
+            "G00 X490 (GO TO INITIAL POSITION)",
+            "G00 Z105 (MOVE BRUSH DOWN TO CONTACT PALETTE)",
+            "G00 X500 (MOVE BRUSH ACROSS PAINT ON PALETTE)",
+            "G00 Z120 (RAISE BRUSH FOR CLEARANCE WITH PALETTE)",
+            "G00 X490 (GO TO INITIAL POSITION)",
+            "G00 Z105 (MOVE BRUSH DOWN TO CONTACT PALETTE)",
+            "G00 X500 (MOVE BRUSH ACROSS PAINT ON PALETTE)",
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)"
         ],
-        "unload_brush": [
+        "unload_paint_from_tool": [
+            "G00 Z{safety|z_clearance_mm} (RAISE TO SAFE WORKSPACE CLEARANCE HEIGHT)",
+            "G00 X725 Y400 (GO TO POSITION ABOVE CANVAS)",
+            "G00 A90 B45 C0 (ORIENT PAINT BRUSH)",
+            "G00 Z113 (LOWER BRUSH TO CANVAS)",
+            "G91 (RELATIVE COORDINATES)",
+            "G01 X150 F3000 (BRUSH ACROSS CANVAS)",
+            "G00 Z10 (RAISE BRUSH ABOVE CANVAS)"
+
         ]
     }
   }
